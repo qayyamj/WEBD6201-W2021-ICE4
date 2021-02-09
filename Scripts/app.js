@@ -102,6 +102,12 @@
             if(contact.serialize())
             {
               localStorage.setItem((localStorage.length + 1).toString(), contact.serialize());
+
+              if(contact.serialize())
+              {
+                let contact = new core.Contact(fullName.value, contactNumber.value, emailAddress.value);
+
+              }
             }
           }
         });
@@ -114,6 +120,7 @@
         let contactList = document.getElementById("contactList");
 
         let data = "";
+        let index = 0;  // sentinel variable
 
         // returns an array of keys from localStorage
         let keys = Object.keys(localStorage);
@@ -124,20 +131,22 @@
           contact.deserialize(contactData);
 
           data += `<tr>
-          <th scope="row">${key}</th>
+          <th scope="row">${index}</th>
           <td>${contact.FullName}</td>
           <td>${contact.ContactNumber}</td>
           <td>${contact.EmailAddress}</td>
           <td class="text-center"><button value="${key}" class="btn btn-primary btn-sm edit"><i class="fas fa-edit fa-sm"></i> Edit</button></td>
           <td class="text-center"><button value="${key}" class="btn btn-danger btn-sm delete"><i class="fas fa-trash-alt fa-sm"></i> Delete</button></td>
           </tr>`;
+
+          index++
         }
 
         contactList.innerHTML = data;
 
         //TODO - need to create an edit page
         $("button.edit").on("click", function(){
-          console.log($(this).val());
+          location.href = "edit.html#" + $(this).val();
          });
 
          //TODO - need to fix this item - it breaks when we delete a middle item
@@ -151,6 +160,37 @@
       }
     }
 
+    function displayEdit()
+    {
+      let key = location.hash.substring(1);
+      let contact = new core.Contact();
+
+      // check if key is empty
+      if(key != "")
+      {
+
+        contact.deserialize(localStorage.getItem(key));
+  
+        $("#fullName").val(contact.FullName);
+        $("#contactNumber").val(contact.ContactNumber);
+        $("#emailAddress").val(contact.EmailAddress);
+      }
+
+      $("#editButton").on("click", function(){
+
+        contact.FullName = $("fullName").val();
+        contact.ContactNumber = $("#contactNumber").val();
+        contact.EmailAddress = $("#emailAddress").val();
+
+
+        localStorage.setItem(key, contact.serialize());
+        location.href = "contact-list.html";
+      });
+
+      $("#cancelButton").on("click", function(){
+        location.href = "contact-list.html";
+      });
+    }
      
 
     function Start()
@@ -177,6 +217,8 @@
           case "Contact-List":
             displayContactList();
           break;
+          case "Edit":
+            displayEdit();
         }
         
     }
