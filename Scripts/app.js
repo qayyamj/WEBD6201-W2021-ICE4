@@ -187,6 +187,8 @@
         location.href = "contact-list.html";
       });
 
+      //TODO - make this page more versatile so that it cn act as an Add page as well
+
       $("#cancelButton").on("click", function(){
         location.href = "contact-list.html";
       });
