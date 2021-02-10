@@ -75,24 +75,78 @@
     {
 
     }
+    
+    function testFullName()
+    {
+      
+      let fullNamePattern = /[A-Z][a-z]+(\s|,)[A-Z][a-z]{1,50}/;
+      let messageArea = $("#messageArea").hide();
+
+      // form validation
+      $("#fullName").on("blur", function()
+      {
+        if(!fullNamePattern.test($(this).val()))
+        {
+          $(this).trigger("focus").trigger("select");
+          messageArea.show().addClass("alert alert-danger").text("Please enter an appropriate Name. A First Name and a Last Name is required with a minum length of 2 characters each.");
+        }
+        else
+        {
+            messageArea.removeAttr("class").hide();
+        }
+      });
+    }
+
+    function testContactNumber()
+    {
+      let contactNumberPattern = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+      let messageArea = $("#messageArea");
+      // form validation
+           $("#contactNumber").on("blur", function()
+           {
+             if(!contactNumberPattern.test($(this).val()))
+             {
+               $(this).trigger("focus").trigger("select");
+               messageArea.show().addClass("alert alert-danger").text("Please enter a valid Contact Number.");
+             }
+             else
+             {
+                 messageArea.removeAttr("class").hide();
+             }
+           });
+    }
+
+    function testEmailAddress()
+    {
+      let emailAddressPattern = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})*$/;
+      let messageArea = $("#messageArea");
+      // form validation
+           $("#emailAddress").on("blur", function()
+           {
+             if(!emailAddressPattern.test($(this).val()))
+             {
+               $(this).trigger("focus").trigger("select");
+               messageArea.show().addClass("alert alert-danger").text("Please enter a valid Email Address.");
+             }
+             else
+             {
+                 messageArea.removeAttr("class").hide();
+             }
+           });
+    }
+
+    function formValidation()
+    {
+      testFullName();
+      testContactNumber();
+      testEmailAddress();
+    }
 
     function displayContact()
     {
-      let messageArea = $("#messageArea").hide();
 
-        // form validation
-        $("#fullName").on("blur", function()
-        {
-          if($(this).val().length < 2)
-          {
-            $(this).trigger("focus").trigger("select");
-            messageArea.show().addClass("alert alert-danger").text("Please enter an appropriate Name");
-          }
-          else
-          {
-              messageArea.removeAttr("class").hide();
-          }
-        });
+      // form validation
+      formValidation();
 
         $("#sendButton").on("click", (event)=> 
         {
@@ -164,11 +218,14 @@
 
     function displayEdit()
     {
+      let fullNamePattern = /[A-Z][a-z]+(\s|,)[A-Z][a-z]{1,50}/;
+      let messageArea = $("#messageArea").hide();
+      
       let key = location.hash.substring(1);
-
-      console.log(key);
-
       let contact = new core.Contact();
+
+      // form validation
+      formValidation();
 
       // check to ensure that the key is not empty
       if(key != "")
