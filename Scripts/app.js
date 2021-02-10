@@ -274,6 +274,16 @@
       });
     }
 
+    function displayLogin()
+    {
+
+    }
+
+    function displayRegister()
+    {
+      
+    }
+
     function Start()
     {
         console.log("App Started...");
@@ -300,6 +310,12 @@
             break;
           case "Edit":
             displayEdit();
+            break;
+          case "Login":
+            displayLogin();
+            break;
+          case "Register":
+            displayRegister();
             break;
         }  
     }
