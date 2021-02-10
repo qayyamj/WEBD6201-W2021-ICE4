@@ -6,6 +6,7 @@
 
 "use strict";
 
+
 ((core) =>
 {
     function displayHome()
@@ -101,13 +102,9 @@
 
             if(contact.serialize())
             {
-              localStorage.setItem((localStorage.length + 1).toString(), contact.serialize());
+              let key = contact.FullName.substring(0, 1) + Date.now();
 
-              if(contact.serialize())
-              {
-                let contact = new core.Contact(fullName.value, contactNumber.value, emailAddress.value);
-
-              }
+              localStorage.setItem(key, contact.serialize());
             }
           }
         });
@@ -120,18 +117,20 @@
         let contactList = document.getElementById("contactList");
 
         let data = "";
-        let index = 0;  // sentinel variable
 
-        // returns an array of keys from localStorage
         let keys = Object.keys(localStorage);
-        for (const key of keys) {
+         
+        let index = 1;
+
+        for (const key of keys) 
+        {
           let contactData = localStorage.getItem(key);
 
           let contact = new core.Contact();
           contact.deserialize(contactData);
 
           data += `<tr>
-          <th scope="row">${index}</th>
+          <th scope="row" class="text-center">${index}</th>
           <td>${contact.FullName}</td>
           <td>${contact.ContactNumber}</td>
           <td>${contact.EmailAddress}</td>
@@ -139,23 +138,26 @@
           <td class="text-center"><button value="${key}" class="btn btn-danger btn-sm delete"><i class="fas fa-trash-alt fa-sm"></i> Delete</button></td>
           </tr>`;
 
-          index++
+          index++;
         }
 
         contactList.innerHTML = data;
 
-        //TODO - need to create an edit page
         $("button.edit").on("click", function(){
           location.href = "edit.html#" + $(this).val();
          });
 
-         //TODO - need to fix this item - it breaks when we delete a middle item
          $("button.delete").on("click", function(){
            if(confirm("Are you sure?"))
            {
             localStorage.removeItem($(this).val());
-            location.href = "contact-list.html"; // refresh the page
            }
+           location.href = "contact-list.html"; // refresh the page
+         });
+
+         $("#addButton").on("click", function() 
+         {
+          location.href = "edit.html";
          });
       }
     }
@@ -163,37 +165,57 @@
     function displayEdit()
     {
       let key = location.hash.substring(1);
+
+      console.log(key);
+
       let contact = new core.Contact();
 
-      // check if key is empty
+      // check to ensure that the key is not empty
       if(key != "")
       {
-
+        // get contact info from localStorage
         contact.deserialize(localStorage.getItem(key));
-  
+
+        // display contact information in the form
         $("#fullName").val(contact.FullName);
         $("#contactNumber").val(contact.ContactNumber);
         $("#emailAddress").val(contact.EmailAddress);
       }
+      else
+      {
+        // modify the page so that it shows "Add Contact" in the header 
+        $("main>h1").text("Add Contact");
+        // modify edit button so that it shows "Add" as well as the appropriate icon
+        $("#editButton").html(`<i class="fas fa-plus-circle fa-lg"></i> Add`);
+      }
 
-      $("#editButton").on("click", function(){
+      $("#editButton").on("click", function() 
+      {
+        // check to see if key is empty
+        if(key == "")
+        {
+          // create a new key
+          key = contact.FullName.substring(0, 1) + Date.now();
+        }
 
-        contact.FullName = $("fullName").val();
+        // copy contact info from form to contact object
+        contact.FullName = $("#fullName").val();
         contact.ContactNumber = $("#contactNumber").val();
         contact.EmailAddress = $("#emailAddress").val();
 
-
+        // add the contact info to localStorage
         localStorage.setItem(key, contact.serialize());
+
+        // return to the contact list
         location.href = "contact-list.html";
       });
 
-      //TODO - make this page more versatile so that it cn act as an Add page as well
-
-      $("#cancelButton").on("click", function(){
+      $("#cancelButton").on("click", function()
+      {
+        // return to the contact list
         location.href = "contact-list.html";
       });
     }
-     
 
     function Start()
     {
@@ -218,9 +240,10 @@
             break;
           case "Contact-List":
             displayContactList();
-          break;
+            break;
           case "Edit":
             displayEdit();
+            break;
         }
         
     }
