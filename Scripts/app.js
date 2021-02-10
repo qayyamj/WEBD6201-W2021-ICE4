@@ -244,8 +244,7 @@
           case "Edit":
             displayEdit();
             break;
-        }
-        
+        }  
     }
 
     window.addEventListener("load", Start);
