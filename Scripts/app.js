@@ -7,6 +7,7 @@
 "use strict";
 
 
+
 ((core) =>
 {
     function displayHome()
@@ -75,20 +76,17 @@
     {
 
     }
-    
+
     function testFullName()
     {
-      
       let fullNamePattern = /[A-Z][a-z]+(\s|,)[A-Z][a-z]{1,50}/;
       let messageArea = $("#messageArea").hide();
-
-      // form validation
       $("#fullName").on("blur", function()
       {
         if(!fullNamePattern.test($(this).val()))
         {
           $(this).trigger("focus").trigger("select");
-          messageArea.show().addClass("alert alert-danger").text("Please enter an appropriate Name. A First Name and a Last Name is required with a minum length of 2 characters each.");
+          messageArea.show().addClass("alert alert-danger").text("Please enter an appropriate Name. A first name and last name are required with a minimum length of 2 characters each.");
         }
         else
         {
@@ -101,38 +99,37 @@
     {
       let contactNumberPattern = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
       let messageArea = $("#messageArea");
-      // form validation
-           $("#contactNumber").on("blur", function()
-           {
-             if(!contactNumberPattern.test($(this).val()))
-             {
-               $(this).trigger("focus").trigger("select");
-               messageArea.show().addClass("alert alert-danger").text("Please enter a valid Contact Number.");
-             }
-             else
-             {
-                 messageArea.removeAttr("class").hide();
-             }
-           });
+      $("#contactNumber").on("blur", function()
+      {
+        if(!contactNumberPattern.test($(this).val()))
+        {
+          $(this).trigger("focus").trigger("select");
+          messageArea.show().addClass("alert alert-danger").text("Please enter a valid contact number.");
+        }
+        else
+        {
+            messageArea.removeAttr("class").hide();
+        }
+      });
+
     }
 
     function testEmailAddress()
     {
       let emailAddressPattern = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})*$/;
       let messageArea = $("#messageArea");
-      // form validation
-           $("#emailAddress").on("blur", function()
-           {
-             if(!emailAddressPattern.test($(this).val()))
-             {
-               $(this).trigger("focus").trigger("select");
-               messageArea.show().addClass("alert alert-danger").text("Please enter a valid Email Address.");
-             }
-             else
-             {
-                 messageArea.removeAttr("class").hide();
-             }
-           });
+      $("#emailAddress").on("blur", function()
+      {
+        if(!emailAddressPattern.test($(this).val()))
+        {
+          $(this).trigger("focus").trigger("select");
+          messageArea.show().addClass("alert alert-danger").text("Please enter a valid email address.");
+        }
+        else
+        {
+            messageArea.removeAttr("class").hide();
+        }
+      });
     }
 
     function formValidation()
@@ -142,9 +139,10 @@
       testEmailAddress();
     }
 
+    
+
     function displayContact()
     {
-
       // form validation
       formValidation();
 
@@ -156,7 +154,7 @@
 
             if(contact.serialize())
             {
-              let key = contact.FullName.substring(0, 1) + Date.now();
+              let key = contact.FullName.slice(0,1) + Date.now();
 
               localStorage.setItem(key, contact.serialize());
             }
@@ -171,13 +169,10 @@
         let contactList = document.getElementById("contactList");
 
         let data = "";
-
+        let index = 1; // sentinel variable
+        // returns an array of keys from localStorage
         let keys = Object.keys(localStorage);
-         
-        let index = 1;
-
-        for (const key of keys) 
-        {
+        for (const key of keys) {
           let contactData = localStorage.getItem(key);
 
           let contact = new core.Contact();
@@ -197,11 +192,13 @@
 
         contactList.innerHTML = data;
 
-        $("button.edit").on("click", function(){
-          location.href = "edit.html#" + $(this).val();
-         });
+        $("button.edit").on("click", function()
+        {
+          location.href ="edit.html#" + $(this).val();
+        });
 
-         $("button.delete").on("click", function(){
+         $("button.delete").on("click", function()
+         {
            if(confirm("Are you sure?"))
            {
             localStorage.removeItem($(this).val());
@@ -209,27 +206,22 @@
            location.href = "contact-list.html"; // refresh the page
          });
 
-         $("#addButton").on("click", function() 
+         $("#addButton").on("click", function()
          {
-          location.href = "edit.html";
-         });
+            location.href = "edit.html";
+         })
       }
     }
 
     function displayEdit()
     {
-      let fullNamePattern = /[A-Z][a-z]+(\s|,)[A-Z][a-z]{1,50}/;
-      let messageArea = $("#messageArea").hide();
-      
       let key = location.hash.substring(1);
       let contact = new core.Contact();
-
-      // form validation
-      formValidation();
 
       // check to ensure that the key is not empty
       if(key != "")
       {
+        
         // get contact info from localStorage
         contact.deserialize(localStorage.getItem(key));
 
@@ -240,38 +232,43 @@
       }
       else
       {
-        // modify the page so that it shows "Add Contact" in the header 
+        // modify the page so that it shows "Add Contact" in the header
         $("main>h1").text("Add Contact");
-        // modify edit button so that it shows "Add" as well as the appropriate icon
+
+        // modify the edit button so that it shows "Add" as well as the appropriate icon
         $("#editButton").html(`<i class="fas fa-plus-circle fa-lg"></i> Add`);
       }
 
+      // form validation
+      formValidation();
+
       $("#editButton").on("click", function() 
       {
-        // check to see if key is empty
+
         if(key == "")
         {
-          // create a new key
+          // create a new key based on the First initial of the FullName and the Date.now() in ms
           key = contact.FullName.substring(0, 1) + Date.now();
         }
 
-        // copy contact info from form to contact object
-        contact.FullName = $("#fullName").val();
+        // copy contact info from the form to the contact object
+        contact.FullName =  $("#fullName").val();
         contact.ContactNumber = $("#contactNumber").val();
         contact.EmailAddress = $("#emailAddress").val();
 
-        // add the contact info to localStorage
+        // add or edit the contact ifo in localStorage
         localStorage.setItem(key, contact.serialize());
 
-        // return to the contact list
+        // return to the contact-list page
         location.href = "contact-list.html";
       });
 
       $("#cancelButton").on("click", function()
       {
-        // return to the contact list
+        // return to the contact-list page
         location.href = "contact-list.html";
       });
+      
     }
 
     function displayLogin()
@@ -281,8 +278,9 @@
 
     function displayRegister()
     {
-      
+
     }
+     
 
     function Start()
     {
@@ -313,11 +311,13 @@
             break;
           case "Login":
             displayLogin();
-            break;
+          break;
           case "Register":
             displayRegister();
-            break;
-        }  
+          break;
+          
+        }
+        
     }
 
     window.addEventListener("load", Start);
