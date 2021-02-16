@@ -1,9 +1,9 @@
 {
-  "name": "webd6201-w2021-ice4",
+  "name": "webd6201-w2021-ice5",
   "version": "1.0.0",
-  "description": "My site for ICE 4",
+  "description": "My site for ICE 5",
   "main": "app.js",
-  "repository": "https://github.com/qayyamj/WEBD6201-W2021-ICE4",
+  "repository": "https://github.com/qayyamj/WEBD6201-W2021-ICE5",
   "author": "Qayyam Jamal <qayyamj@gmail.com>",
   "license": "MIT",
   "dependencies": {
